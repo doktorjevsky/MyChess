@@ -25,21 +25,21 @@ public class ChessBoard {
 
     public List<Move> validMovesFrom(Color c, Position p, Piece[][] board){
         List<Move> ms = new ArrayList<>();
-        if (c != colorAt(p, board)){
-            return ms;
-        } else {
+        if (c == colorAt(p, board)) {
             switch (Objects.requireNonNull(valueAt(p, board))) {
-                case QUEEN  -> ms = queenMoves(c, p, board);
-                case KING   -> ms = kingMoves(c, p, board);
+                case QUEEN -> ms = queenMoves(c, p, board);
+                case KING -> ms = kingMoves(c, p, board);
                 case BISHOP -> ms = bishopMoves(c, p, board);
                 case KNIGHT -> ms = knightMoves(c, p, board);
-                case ROOK   -> ms = rookMoves(c, p, board);
-                case PAWN   -> ms = pawnMoves(c, p, board);
+                case ROOK -> ms = rookMoves(c, p, board);
+                case PAWN -> ms = pawnMoves(c, p, board);
             }
             ms = ms.stream().filter(m -> !inCheck(c, movePiece(m, board))).collect(Collectors.toList());
-            if (valueAt(p, board) == Value.KING){ ms.addAll(castleMoves(c, board));}
-            return ms;
+            if (valueAt(p, board) == Value.KING) {
+                ms.addAll(castleMoves(c, board));
+            }
         }
+        return ms;
     }
 
     private Piece[][] movePiece(Move m, Piece[][] board){
@@ -116,7 +116,6 @@ public class ChessBoard {
         return qms;
     }
 
-    // TODO: castling
     private List<Move> kingMoves(Color c, Position p, Piece[][] board){
         List<Move> ms = new ArrayList<>();
         List<Incrementor<Position>> incs = new ArrayList<>(IncrementorFactories.diagonalIncrementors());
