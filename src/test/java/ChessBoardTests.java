@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.swing.plaf.basic.BasicLookAndFeel;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -154,5 +153,19 @@ public class ChessBoardTests {
     public void kingsTest(){
         List<Move> whiteKing = cb.validMovesFrom(Color.WHITE, new Position(0,0), kingBoard);
         Assertions.assertFalse(whiteKing.contains(new Move(new Position(0,0), new Position(1,1))));
+    }
+
+    @Test
+    public void enPassantTest(){
+        List<Move> moves = List.of(
+                new Move(new Position(1,1), new Position(1,3)),
+                new Move(new Position(6,7), new Position(5,4)),
+                new Move(new Position(1,3), new Position(1,4)),
+                new Move(new Position(0,6), new Position(0,4))
+        );
+        moves.forEach(m -> standardBoard = cb.makeValidMove(m, standardBoard));
+        List<Move> enPassant = cb.validMovesFrom(Color.WHITE, new Position(1,4), standardBoard);
+        Assertions.assertTrue(enPassant.contains(new Move(new Position(1,4), new Position(0,3))));
+        Assertions.assertNull(standardBoard[3][0]);
     }
 }

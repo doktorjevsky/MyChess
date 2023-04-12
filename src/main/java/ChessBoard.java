@@ -2,17 +2,56 @@ import Interfaces.Incrementor;
 import enums.Color;
 import enums.Value;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Stack;
+import java.util.*;
 import java.util.stream.Collectors;
 
-// TODO: factor out some static methods
+/**
+ * A class that:
+ *    - Given a Position on the board by a player of color Color, returns valid moves
+ *    - Given a valid Move and a board (Piece[][]) in a valid state, performs the move
+ *      and returns a new board.
+ *    - Performs all regular moves and the special moves En Passant and Castling, but not Pawn Promotion
+ *
+ * */
 
 public class ChessBoard {
 
     private final Stack<Move> transcript = new Stack<>();
+
+    /**
+    * Preconditions: board is in a valid state and m is a valid move
+    * Postcondition: returns an updated board that is valid
+    * */
+    public Piece[][] makeValidMove(Move m, Piece[][] board){
+        Piece[][] out;
+        Color player = colorAt(m.x(), board);
+        switch (Objects.requireNonNull(valueAt(m.x(), board))) {
+            case PAWN -> {
+                out = movePiece(m, board);
+                int dx = Math.abs(m.y().x() - m.x().x());
+                if (dx > 0 && pieceAt(m.y(), board) == null){ // en passant
+                    if (colorAt(m.x(),board) == Color.WHITE){
+                        removePieceAt(new Position(m.y().x(), m.y().y()-1), out);
+                    } else {
+                        removePieceAt(new Position(m.y().x(), m.y().y()+1), out);
+                    }
+                }
+            }
+            case KING -> {
+                out = movePiece(m, board);
+                int dx = m.y().x() - m.x().x();
+                if (dx == 2){
+                    out = movePiece(new Move(kingRook(player), new Position(5, getBackRow(player))), out);
+                }
+                else if (dx == -2){
+                    out = movePiece(new Move(queenRook(player), new Position(3, getBackRow(player))), out);
+                }
+            }
+            default -> out = movePiece(m, board);
+        }
+        transcript.push(m);
+        return out;
+    }
 
 
     public void putPieceAt(Piece piece, Position p, Piece[][] board){
@@ -79,7 +118,7 @@ public class ChessBoard {
     * returns true if the king of color "color" is in check
     * */
     public boolean inCheck(Color color, Piece[][] board){
-        Position kp = kingPos(color, board);
+        Position kp = kingPosOnBoard(color, board);
         if (kp == null){
             return false;
         } else {
@@ -87,7 +126,7 @@ public class ChessBoard {
         }
     }
 
-    private Position kingPos(Color color, Piece[][] board){
+    private Position kingPosOnBoard(Color color, Piece[][] board){
         Piece p = new Piece(Value.KING, color);
         for (int i = 0; i < 8; i++){
             for (int j = 0; j < 8; j++){
@@ -131,7 +170,7 @@ public class ChessBoard {
 
     private List<Move> castleMoves(Color c, Piece[][] board){
         List<Move> ms = new ArrayList<>();
-        Position kp = kingPos(c, board);
+        Position kp = kingPosOnBoard(c, board);
         if (hasMoved(kp) || inCheck(c, board)){
             return ms;
         }
@@ -164,7 +203,41 @@ public class ChessBoard {
         }
 
         moves.addAll(pawnAttackMoves(c, p, board));
+        moves.addAll(enPassantMoves(c, p));
         return moves;
+    }
+
+    private List<Move> enPassantMoves(Color c, Position p){
+        List<Move> ms = new ArrayList<>();
+        if (c == Color.WHITE && p.y() == 4){
+            Move lastMove = transcript.empty() ? null : transcript.peek();
+            if (lastMove == null){
+                return ms;
+            }
+            else if (lastMove.equals(new Move(new Position(p.x()-1,6), new Position(p.x()-1,4)))){
+                ms.add(new Move(p, new Position(p.x()-1, 3)));
+            }
+            else if (lastMove.equals(new Move(new Position(p.x()+1,6), new Position(p.x()+1,4)))){
+                ms.add(new Move(p, new Position(p.x()+1, 3)));
+            }
+            return ms;
+        }
+        else if (c == Color.BLACK && p.y() == 3){
+            Move lastMove = transcript.empty() ? null : transcript.peek();
+            if (lastMove == null){
+                return ms;
+            }
+            else if (lastMove.equals(new Move(new Position(p.x()-1,1), new Position(p.x()-1,3)))){
+                ms.add(new Move(p, new Position(p.x()-1, 2)));
+            }
+            else if (lastMove.equals(new Move(new Position(p.x()+1,1), new Position(p.x()+1,3)))){
+                ms.add(new Move(p, new Position(p.x()+1, 2)));
+            }
+            return ms;
+        } else {
+            return ms;
+        }
+
     }
 
     private List<Move> pawnAttackMoves(Color c, Position p, Piece[][] board){
@@ -247,6 +320,10 @@ public class ChessBoard {
     * CONSTANTS
     * */
 
+    private Position kingPos(Color c){
+        return new Position(4, getBackRow(c));
+    }
+
     private Position kingRook(Color c){
         return new Position(7, getBackRow(c));
     }
@@ -258,6 +335,7 @@ public class ChessBoard {
     private int getBackRow(Color c){
         return c == Color.WHITE ? 0 : 7;
     }
+
 
 }
 
