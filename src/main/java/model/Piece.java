@@ -1,3 +1,5 @@
+package model;
+
 import enums.Color;
 import enums.Value;
 

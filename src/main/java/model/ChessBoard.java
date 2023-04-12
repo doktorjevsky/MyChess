@@ -1,3 +1,5 @@
+package model;
+
 import Interfaces.Incrementor;
 import enums.Color;
 import enums.Value;
@@ -51,6 +53,30 @@ public class ChessBoard {
         }
         transcript.push(m);
         return out;
+    }
+
+
+    /**
+     * Returns true if player "c" has lost
+     * */
+    public boolean isCheckMate(Color c, Piece[][] board){
+        return inCheck(c, board) && !hasValidMoves(c, board);
+    }
+
+    public boolean isStaleMate(Piece[][] board){
+        return !hasValidMoves(Color.WHITE, board) && !inCheck(Color.WHITE, board)
+                || !hasValidMoves(Color.BLACK, board) && !inCheck(Color.BLACK, board);
+    }
+
+    private boolean hasValidMoves(Color c, Piece[][] board){
+        for (int i = 0; i < 8; i++){
+            for (int j = 0; j < 8; j++){
+                if (validMovesFrom(c, new Position(j,i), board).size() > 0){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

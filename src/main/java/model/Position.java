@@ -1,3 +1,5 @@
+package model;
+
 import Interfaces.Tuple;
 
 import java.util.Objects;

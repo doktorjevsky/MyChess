@@ -1,5 +1,6 @@
 import enums.Color;
 import enums.Value;
+import model.*;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -168,4 +169,41 @@ public class ChessBoardTests {
         Assertions.assertTrue(enPassant.contains(new Move(new Position(1,4), new Position(0,3))));
         Assertions.assertNull(standardBoard[3][0]);
     }
+
+    @Test
+    public void isCheckMate(){
+        List<Move> moves = List.of(
+                new Move(new Position(4,1), new Position(4,2)),
+                new Move(new Position(5,6), new Position(5,5)),
+                new Move(new Position(6,6), new Position(6,4)),
+                new Move(new Position(3,0), new Position(7,4))
+        );
+        moves.forEach(m -> standardBoard = cb.makeValidMove(m, standardBoard));
+        Assertions.assertTrue(cb.isCheckMate(Color.BLACK, standardBoard));
+    }
+
+    @Test
+    public void staleMateTest(){
+        Piece[][] b = new Piece[8][8];
+        b[0][4] = new Piece(Value.KING, Color.WHITE);
+        b[1][4] = new Piece(Value.PAWN, Color.BLACK);
+        b[2][4] = new Piece(Value.KING, Color.BLACK);
+
+        Assertions.assertTrue(cb.isStaleMate(b));
+    }
+
+    private void printBoard(Piece[][] b){
+        for (Piece[] r : b){
+            for (Piece p : r){
+                if (p == null){
+                    System.out.print("#");
+                } else {
+                    System.out.print(p);
+                }
+            }
+            System.out.print("\n");
+        }
+    }
+
+
 }

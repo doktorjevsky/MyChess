@@ -1,3 +1,5 @@
+package model;
+
 import Interfaces.Incrementor;
 import enums.Color;
 
