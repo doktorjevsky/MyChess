@@ -306,7 +306,7 @@ public class ChessBoard {
         return transcript.stream().anyMatch(m -> m.y().equals(p));
     }
 
-    private Color other(Color c){
+    public Color other(Color c){
         return c == Color.WHITE ? Color.BLACK : Color.WHITE;
     }
 
