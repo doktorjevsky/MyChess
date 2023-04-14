@@ -52,4 +52,26 @@ public class Piece {
         }
         return color == Color.BLACK ? value.toString().substring(0,1) : value.toString().substring(0,1).toLowerCase();
     }
+
+    public static Piece fromChar(char ch){
+        Value value = valueFromChar(ch);
+        if (value == null){
+            return null;
+        }
+        return Character.isLowerCase(ch) ? new Piece(value, Color.WHITE) : new Piece(value, Color.BLACK);
+    }
+
+    private static Value valueFromChar(char ch){
+        Value out;
+        switch (Character.toUpperCase(ch)){
+            case 'P' -> out = Value.PAWN;
+            case 'R' -> out = Value.ROOK;
+            case 'N' -> out = Value.KNIGHT;
+            case 'B' -> out = Value.BISHOP;
+            case 'Q' -> out = Value.QUEEN;
+            case 'K' -> out = Value.KING;
+            default -> out = null;
+        }
+        return out;
+    }
 }

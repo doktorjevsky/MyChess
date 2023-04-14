@@ -27,4 +27,28 @@ public class ChessBoardFactory {
         }
         return ps;
     }
+
+    public static Piece[][] fromString(String s) throws Exception {
+        if (s.length() != 64){
+            throw new Exception("Wrong format!");
+        }
+        Piece[][] out = new Piece[8][8];
+        for (int i = 0; i < s.length(); i++){
+            out[i / 8][i % 8] = Piece.fromChar(s.charAt(i));
+        }
+        return out;
+    }
+
+    public static String getString(Piece[][] board){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 64; i++){
+            Piece p = board[i/8][i%8];
+            if (p == null){
+                sb.append(" ");
+            } else {
+                sb.append(p);
+            }
+        }
+        return sb.toString();
+    }
 }

@@ -21,8 +21,8 @@ public class ChessGame {
         currentPlayer = Color.WHITE;
     }
 
-    public synchronized List<Move> getValidMoves(Position p){
-        return logic.validMovesFrom(currentPlayer, p, board);
+    public synchronized List<Move> getValidMoves(Position p, Color player){
+        return logic.validMovesFrom(player, p, board);
     }
 
     public synchronized Color getCurrentPlayer(){
@@ -37,8 +37,8 @@ public class ChessGame {
         return out;
     }
 
-    public synchronized GameState makeMove(Move m)  {
-        if (getValidMoves(m.x()).contains(m)) {
+    public synchronized GameState makeMove(Move m, Color player)  {
+        if (player == currentPlayer && getValidMoves(m.x(), currentPlayer).contains(m)) {
             board = logic.makeValidMove(m, board);
             currentPlayer = currentPlayer == Color.WHITE ? Color.BLACK : Color.WHITE;
             return getState();
@@ -59,8 +59,9 @@ public class ChessGame {
         }
     }
 
-    public synchronized GameState makeMove(Position from, Position to){
-        return makeMove(new Move(from, to));
+    public synchronized GameState makeMove(Position from, Position to, Color player){
+
+        return makeMove(new Move(from, to), player);
     }
 
 

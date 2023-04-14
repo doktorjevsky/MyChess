@@ -40,6 +40,14 @@ public class Position implements Tuple<Integer, Integer> {
 
     @Override
     public String toString(){
-        return "(" + x + ", " + y + ")";
+        return x + " " + y;
+    }
+
+    public static Position fromString(String s) throws Exception {
+        String[] p = s.split("\s+");
+        if (p.length != 2){
+            throw new Exception("Wrong format!");
+        }
+        return new Position(Integer.parseInt(p[0]), Integer.parseInt(p[1]));
     }
 }

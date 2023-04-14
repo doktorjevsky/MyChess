@@ -32,7 +32,7 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             while (socket.isConnected()){
-                Object request = in.readObject();
+                Object request = in.readObject(); // from client
                 handleRequest(request);
             }
 
@@ -50,9 +50,9 @@ public class ClientHandler implements Runnable {
     }
 
     private void handleRequest(Object request) {
-        Object response = server.handleRequest(request);
+        Object response = server.handleRequest(request, player); // response from server
         try {
-            out.writeObject(response);
+            out.writeObject(response); // send back response
         } catch (IOException e) {
             e.printStackTrace();
         }
