@@ -1,18 +1,19 @@
 package server;
 
+import com.google.gson.Gson;
 import enums.Color;
+import message.Message;
+import message.MessageType;
 import model.ChessGame;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ClientHandler implements Runnable {
 
     private Color player;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
+    private BufferedReader in;
+    private BufferedWriter out;
     private GameServer server;
     private Socket socket;
 
@@ -21,8 +22,8 @@ public class ClientHandler implements Runnable {
         this.server = server;
         this.socket = socket;
         try {
-            in  = new ObjectInputStream(socket.getInputStream());
-            out = new ObjectOutputStream(socket.getOutputStream());
+            in  = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
         } catch (IOException e){
             e.printStackTrace();
         }
@@ -32,29 +33,65 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             while (socket.isConnected()){
-                Object request = in.readObject(); // from client
+                String request = in.readLine(); // from client
+                System.out.println("PLAYER: " + player + "   HANDLING REQUEST: " + request);
                 handleRequest(request);
             }
 
-        } catch (IOException | ClassNotFoundException e){
-            e.printStackTrace();
+        } catch (IOException e){
+           // e.printStackTrace();
         } finally {
+            closeConnection();
+        }
+    }
+
+    private void handleRequest(String jsonRequest) {
+        try {
+            Message clientMessage = Message.fromJson(jsonRequest);
+            if (clientMessage.getType() == MessageType.GET_COLOR){
+                respond(new Message(MessageType.COLOR, player.toString()).asJson());
+            }
+            else if (clientMessage.getType() == MessageType.EXIT_GAME){
+                closeConnection();
+            } else {
+                String response = server.handleRequest(clientMessage, player).asJson(); // response from server
+                respond(response);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e){
+            Message error = new Message(MessageType.ERROR, "INVALID JSON");
             try {
-                socket.close();
-                in.close();
-                out.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+                respond(error.asJson());
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         }
     }
 
-    private void handleRequest(Object request) {
-        Object response = server.handleRequest(request, player); // response from server
+    private void respond(String msg) throws IOException {
+        System.out.println("RESPONDING TO: " + player + " MSG: " + msg);
+        out.write(msg); // send back response to client
+        out.newLine();
+        out.flush();
+    }
+
+    private void closeConnection(){
         try {
-            out.writeObject(response); // send back response
+            socket.close();
+            in.close();
+            out.close();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void broadcast(Message m){
+        try {
+            respond(m.asJson());
         } catch (IOException e) {
             e.printStackTrace();
+            closeConnection();
         }
     }
 }

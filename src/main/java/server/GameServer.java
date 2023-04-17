@@ -2,18 +2,28 @@ package server;
 
 
 import enums.Color;
+import enums.GameState;
+import message.Message;
+import message.MessageType;
+import model.ChessBoardFactory;
 import model.ChessGame;
-import server.requests.Message;
-import server.requests.ServerRequestHandler;
+import model.Move;
+import model.Position;
 
+
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class GameServer {
 
     private ServerSocket server;
     private ChessGame gameInstance;
-    private MessageVisitor messageHandler;
+    private List<ClientHandler> clients = new ArrayList<>();
+    private final Color[] player = new Color[]{Color.WHITE, Color.BLACK};
 
     public GameServer(ServerSocket server, ChessGame gameInstance){
         this.server = server;
@@ -21,17 +31,57 @@ public class GameServer {
 
     }
 
-    public void bootServer(){
-
+    public void bootServer() {
+        try {
+            for (int i = 0; i < 2; i++){
+                Socket s = server.accept();
+                ClientHandler client = new ClientHandler(player[i], s, this);
+                System.out.println("SERVER: CLIENT no " + (i+1) + " HAS CONNECTED");
+                clients.add(client);
+                new Thread(client).start();
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
-    public Object handleRequest(Object request, Color player){
-        if (!(request instanceof Message msg)){
-            return null;
+
+    private String getBoard(){
+        return ChessBoardFactory.getString(gameInstance.getBoard());
+    }
+
+    private String makeMove(String move, Color player) throws Exception {
+        GameState state = gameInstance.makeMove(Move.fromString(move), player);
+        System.out.println("GAME STATE: " + state);
+        switch (state) {
+            case GAME_OVER -> update(new Message(MessageType.GAME_OVER, player.toString()));
+            case DRAW      -> update(new Message(MessageType.GAME_OVER, "DRAW"));
+            case CONTINUE  -> update(new Message(MessageType.BOARD, getBoard()));
         }
-        messageHandler = new ServerRequestHandler(gameInstance, player);
-        msg.accept(messageHandler);
-        return messageHandler.getResponse();
+        return ChessBoardFactory.getString(gameInstance.getBoard());
+    }
+
+    private String getMoves(String position, Color player) throws Exception {
+        return Move.stringFromList
+                (gameInstance
+                        .getValidMoves(
+                                Position.
+                                        fromString(position), player));
+    }
+
+    public synchronized Message handleRequest(Message request, Color player) throws Exception {
+        Message s;
+        System.out.println("SERVER: HANDLING REQUEST: " + request.getType());
+        switch (request.getType()) {
+            case GET_MOVES -> s = new Message(MessageType.MOVES, getMoves(request.getData(), player));
+            case MAKE_MOVE -> s = new Message(MessageType.BOARD, makeMove(request.getData(), player));
+            default        -> s = new Message(MessageType.BOARD, getBoard());
+        }
+        return s;
+    }
+
+    private void update(Message m){
+        clients.forEach(c -> c.broadcast(m));
     }
 
 

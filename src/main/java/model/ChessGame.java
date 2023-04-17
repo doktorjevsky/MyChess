@@ -48,7 +48,7 @@ public class ChessGame {
     }
 
     private GameState getState(){
-        if (logic.isCheckMate(logic.other(currentPlayer), board)){
+        if (logic.isCheckMate(currentPlayer, board)){
             return GameState.GAME_OVER;
         }
         else if (logic.isStaleMate(board)){
@@ -59,10 +59,6 @@ public class ChessGame {
         }
     }
 
-    public synchronized GameState makeMove(Position from, Position to, Color player){
-
-        return makeMove(new Move(from, to), player);
-    }
 
 
 }
