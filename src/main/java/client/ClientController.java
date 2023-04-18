@@ -42,7 +42,7 @@ public class ClientController implements MouseListener, Observer {
         int x = e.getX() / BOX_WIDTH;
         Color player = model.getPlayer();
         moves = model.getMoves();
-        y = 7 - y;
+        y = player == Color.WHITE ? 7 - y : y;
 
         if (inBounds(x * BOX_WIDTH, y * BOX_HEIGHT)){
             Position p = new Position(x, y);

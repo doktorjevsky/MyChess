@@ -78,13 +78,13 @@ public class ChessView extends JLayeredPane implements Observer {
         Set<Move> highlight  = model.getMoves();
         BufferedImage boardImage = new BufferedImage(BOARD_SIZE + 5, BOARD_SIZE + 5, BufferedImage.TYPE_INT_ARGB);
         Graphics2D gp = boardImage.createGraphics();
-        printBoardWithHighlights(gp, highlight);
+        printBoardWithHighlights(gp, highlight, perspective);
 
         for (int row = 0; row < 8; row++){
             for (int col = 0; col < 8; col++){
 
                 int x = col * BOX_SIZE;
-                int y = (7 - row) * BOX_SIZE;
+                int y = perspective == Color.WHITE ? (7 - row) * BOX_SIZE : row * BOX_SIZE;
 
                 if (board[row][col] != null){
                     BufferedImage pieceImage = imageMap.get(board[row][col]);
@@ -95,12 +95,12 @@ public class ChessView extends JLayeredPane implements Observer {
         g.drawImage(boardImage,0,0, null);
     }
 
-    private void printBoardWithHighlights(Graphics2D gp, Set<Move> highlight){
+    private void printBoardWithHighlights(Graphics2D gp, Set<Move> highlight, Color perspective){
         for (int row = 0; row < 8; row++){
             for (int col = 0; col < 8; col++){
 
                 int x = col * BOX_SIZE;
-                int y = (7 - row) * BOX_SIZE;
+                int y = perspective == Color.WHITE ? (7 - row) * BOX_SIZE : row * BOX_SIZE;
 
                 BufferedImage backgroundColor = (row + col) % 2 != 0 ? colorMap.get(0) : colorMap.get(1);
                 gp.drawImage(backgroundColor, x, y, BOX_SIZE, BOX_SIZE, null);

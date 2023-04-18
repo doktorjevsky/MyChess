@@ -224,7 +224,10 @@ public class ChessBoard {
             moves.add(new Move(p, f.increment(p)));
         }
 
-        if (inBounds(f.increment(f.increment(p))) && !hasMoved(p) && !occupied(f.increment(f.increment(p)), board)){
+        if (inBounds(f.increment(f.increment(p)))
+                && !hasMoved(p)
+                && !occupied(f.increment(f.increment(p)), board)
+                && !occupied(f.increment(p), board)){
             moves.add(new Move(p, f.increment(f.increment(p))));
         }
 
