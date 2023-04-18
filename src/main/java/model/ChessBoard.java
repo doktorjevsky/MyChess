@@ -63,9 +63,25 @@ public class ChessBoard {
         return inCheck(c, board) && !hasValidMoves(c, board);
     }
 
+    // TODO: repeated moves
     public boolean isStaleMate(Piece[][] board){
         return !hasValidMoves(Color.WHITE, board) && !inCheck(Color.WHITE, board)
-                || !hasValidMoves(Color.BLACK, board) && !inCheck(Color.BLACK, board);
+                || !hasValidMoves(Color.BLACK, board) && !inCheck(Color.BLACK, board)
+                || lastThreeMovesAreRepeated();
+    }
+
+    // ab xy ba yx ab xy ba yx ab xy
+    // xy ab yx ba xy ab yx ba xy ab
+    private boolean lastThreeMovesAreRepeated(){
+        if (transcript.size() < 10){
+            return false;
+        }
+        List<Move> moves = new ArrayList<>(transcript);
+        boolean res = true;
+        for (int i = moves.size()-1; i > moves.size()-6; i--){
+            res = res && moves.get(i).equals(moves.get(i-4));
+        }
+        return res;
     }
 
     private boolean hasValidMoves(Color c, Piece[][] board){
@@ -342,7 +358,8 @@ public class ChessBoard {
     private boolean queenSideEmpty(Color c, Piece[][] board){
         int y = getBackRow(c);
         return !occupied(new Position(3,y),board)
-                && !occupied(new Position(2,y), board);
+                && !occupied(new Position(2,y), board)
+                && !occupied(new Position(1, y), board);
     }
 
     /*

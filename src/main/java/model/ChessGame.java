@@ -3,6 +3,7 @@ package model;
 import enums.Color;
 import enums.GameState;
 import enums.Value;
+import server.GameServer;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ public class ChessGame {
     private Piece[][] board;
     private ChessBoard logic;
     private Color currentPlayer;
+    private GameState state;
 
     public ChessGame(){
         newGame();
@@ -20,6 +22,7 @@ public class ChessGame {
         board = ChessBoardFactory.getStandardBoard();
         logic = new ChessBoard();
         currentPlayer = Color.WHITE;
+        state = GameState.CONTINUE;
     }
 
     public synchronized List<Move> getValidMoves(Position p, Color player){
@@ -41,13 +44,14 @@ public class ChessGame {
     // TODO: protocol for pawn promotion. For now: promote to queen
 
     public synchronized GameState makeMove(Move m, Color player)  {
-        if (player == currentPlayer && getValidMoves(m.x(), currentPlayer).contains(m)) {
+        if (player == currentPlayer && getValidMoves(m.x(), currentPlayer).contains(m) && state == GameState.CONTINUE) {
             board = logic.makeValidMove(m, board);
             if (wasPawnPromotion(m, player)) {
                 logic.putPieceAt(new Piece(Value.QUEEN, player), m.y(), board);
             }
             currentPlayer = currentPlayer == Color.WHITE ? Color.BLACK : Color.WHITE;
-            return getState();
+            state = getState();
+            return state;
         } else {
             return GameState.INVALID_MOVE;
         }

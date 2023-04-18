@@ -57,6 +57,7 @@ public class ClientHandler implements Runnable {
             }
             else if (clientMessage.getType() == MessageType.EXIT_GAME){
                 closeConnection();
+                server.closeServer();
             } else {
                 String response = server.handleRequest(clientMessage, player).asJson(); // response from server
                 respond(response);

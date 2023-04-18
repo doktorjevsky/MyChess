@@ -65,11 +65,11 @@ public class Client implements MessageWriter{
         try {
             Message m = Message.fromJson(input);
             switch (m.getType()) {
-                case BOARD, GAME_OVER, MOVES, COLOR-> forwardMessage(m);
+                case BOARD, GAME_OVER, MOVES, COLOR -> forwardMessage(m);
                 default -> {}
             }
         } catch (Exception e) {
-            e.printStackTrace();
+           // e.printStackTrace();
         }
     }
 

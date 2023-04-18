@@ -60,8 +60,14 @@ public class GameServer {
         GameState state = gameInstance.makeMove(Move.fromString(move), player);
         System.out.println("GAME STATE: " + state);
         switch (state) {
-            case GAME_OVER -> update(new Message(MessageType.GAME_OVER, player.toString()));
-            case DRAW      -> update(new Message(MessageType.GAME_OVER, "DRAW"));
+            case GAME_OVER -> {
+                    update(new Message(MessageType.BOARD, getBoard()));
+                    update(new Message(MessageType.GAME_OVER, player.toString()));
+            }
+            case DRAW      -> {
+                update(new Message(MessageType.BOARD, getBoard()));
+                update(new Message(MessageType.GAME_OVER, "DRAW"));
+            }
             case CONTINUE  -> update(new Message(MessageType.BOARD, getBoard()));
         }
         return ChessBoardFactory.getString(gameInstance.getBoard());

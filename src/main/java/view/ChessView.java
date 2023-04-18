@@ -4,7 +4,9 @@ import client.ChessModel;
 import client.ClientController;
 import client.Observer;
 import enums.Color;
+import enums.GameState;
 import enums.Value;
+import message.MessageType;
 import model.Move;
 import model.Piece;
 import model.Position;
@@ -13,6 +15,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.Buffer;
@@ -29,11 +32,12 @@ public class ChessView extends JLayeredPane implements Observer {
 
     private Map<Piece, BufferedImage> imageMap = new HashMap<>();
     private Map<Integer, BufferedImage> colorMap;
+    private MouseListener ml;
 
 
     public ChessView(ChessModel model){
-        ClientController controller = new ClientController(model, BOX_SIZE, BOX_SIZE);
-        this.addMouseListener(controller);
+        ml = new ClientController(model, BOX_SIZE, BOX_SIZE);
+        this.addMouseListener(ml);
         this.model = model;
         initMaps();
     }
@@ -93,6 +97,7 @@ public class ChessView extends JLayeredPane implements Observer {
             }
         }
         g.drawImage(boardImage,0,0, null);
+
     }
 
     private void printBoardWithHighlights(Graphics2D gp, Set<Move> highlight, Color perspective){
@@ -123,4 +128,5 @@ public class ChessView extends JLayeredPane implements Observer {
     public void update() {
         repaint();
     }
+
 }
