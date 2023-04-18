@@ -29,6 +29,10 @@ public class ClientHandler implements Runnable {
         }
     }
 
+    public Color getPlayer(){
+        return player;
+    }
+
     @Override
     public void run() {
         try {

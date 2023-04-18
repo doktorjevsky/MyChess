@@ -241,10 +241,10 @@ public class ChessBoard {
                 return ms;
             }
             else if (lastMove.equals(new Move(new Position(p.x()-1,6), new Position(p.x()-1,4)))){
-                ms.add(new Move(p, new Position(p.x()-1, 3)));
+                ms.add(new Move(p, new Position(p.x()-1, 5)));
             }
             else if (lastMove.equals(new Move(new Position(p.x()+1,6), new Position(p.x()+1,4)))){
-                ms.add(new Move(p, new Position(p.x()+1, 3)));
+                ms.add(new Move(p, new Position(p.x()+1, 5)));
             }
             return ms;
         }

@@ -31,6 +31,7 @@ public class GameServer {
 
     }
 
+    // TODO: let the hosting player choose color
     public void bootServer() {
         try {
             for (int i = 0; i < 2; i++){
@@ -45,6 +46,11 @@ public class GameServer {
         }
     }
 
+    public void closeServer(){
+        try {
+            server.close();
+        } catch (Exception ignore) {}
+    }
 
     private String getBoard(){
         return ChessBoardFactory.getString(gameInstance.getBoard());
@@ -83,6 +89,7 @@ public class GameServer {
     private void update(Message m){
         clients.forEach(c -> c.broadcast(m));
     }
+
 
 
 }

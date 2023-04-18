@@ -37,6 +37,8 @@ public class ChessGame {
         return out;
     }
 
+    // TODO: protocol for pawn promotion
+
     public synchronized GameState makeMove(Move m, Color player)  {
         if (player == currentPlayer && getValidMoves(m.x(), currentPlayer).contains(m)) {
             board = logic.makeValidMove(m, board);
