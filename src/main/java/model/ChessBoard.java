@@ -313,15 +313,15 @@ public class ChessBoard {
         return c == Color.WHITE ? Color.BLACK : Color.WHITE;
     }
 
-    private Piece pieceAt(Position p, Piece[][] board){
+    public Piece pieceAt(Position p, Piece[][] board){
         return board[p.y()][p.x()];
     }
 
-    private Color colorAt(Position p, Piece[][] board){
+    public Color colorAt(Position p, Piece[][] board){
         return pieceAt(p, board) == null ? null : pieceAt(p, board).getColor();
     }
 
-    private Value valueAt(Position p, Piece[][] board){
+    public Value valueAt(Position p, Piece[][] board){
         return pieceAt(p, board) == null ? null : pieceAt(p, board).getValue();
     }
 

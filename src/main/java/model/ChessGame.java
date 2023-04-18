@@ -2,6 +2,7 @@ package model;
 
 import enums.Color;
 import enums.GameState;
+import enums.Value;
 
 import java.util.List;
 
@@ -37,15 +38,26 @@ public class ChessGame {
         return out;
     }
 
-    // TODO: protocol for pawn promotion
+    // TODO: protocol for pawn promotion. For now: promote to queen
 
     public synchronized GameState makeMove(Move m, Color player)  {
         if (player == currentPlayer && getValidMoves(m.x(), currentPlayer).contains(m)) {
             board = logic.makeValidMove(m, board);
+            if (wasPawnPromotion(m, player)) {
+                logic.putPieceAt(new Piece(Value.QUEEN, player), m.y(), board);
+            }
             currentPlayer = currentPlayer == Color.WHITE ? Color.BLACK : Color.WHITE;
             return getState();
         } else {
             return GameState.INVALID_MOVE;
+        }
+    }
+
+    private boolean wasPawnPromotion(Move m, Color player){
+        if (player == Color.WHITE){
+            return m.y().y() == 7 && (new Piece(Value.PAWN, Color.WHITE)).equals(logic.pieceAt(m.y(), board));
+        } else {
+            return m.y().y() == 0 && (new Piece(Value.PAWN, Color.BLACK)).equals(logic.pieceAt(m.y(), board));
         }
     }
 
