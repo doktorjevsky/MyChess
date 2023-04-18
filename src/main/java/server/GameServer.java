@@ -37,7 +37,6 @@ public class GameServer {
             for (int i = 0; i < 2; i++){
                 Socket s = server.accept();
                 ClientHandler client = new ClientHandler(player[i], s, this);
-                System.out.println("SERVER: CLIENT no " + (i+1) + " HAS CONNECTED");
                 clients.add(client);
                 new Thread(client).start();
             }
@@ -58,7 +57,6 @@ public class GameServer {
 
     private String makeMove(String move, Color player) throws Exception {
         GameState state = gameInstance.makeMove(Move.fromString(move), player);
-        System.out.println("GAME STATE: " + state);
         switch (state) {
             case GAME_OVER -> {
                     update(new Message(MessageType.BOARD, getBoard()));
@@ -83,7 +81,6 @@ public class GameServer {
 
     public synchronized Message handleRequest(Message request, Color player) throws Exception {
         Message s;
-        System.out.println("SERVER: HANDLING REQUEST: " + request.getType());
         switch (request.getType()) {
             case GET_MOVES -> s = new Message(MessageType.MOVES, getMoves(request.getData(), player));
             case MAKE_MOVE -> s = new Message(MessageType.BOARD, makeMove(request.getData(), player));

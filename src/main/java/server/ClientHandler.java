@@ -38,7 +38,6 @@ public class ClientHandler implements Runnable {
         try {
             while (socket.isConnected()){
                 String request = in.readLine(); // from client
-                System.out.println("PLAYER: " + player + "   HANDLING REQUEST: " + request);
                 handleRequest(request);
             }
 
@@ -75,7 +74,6 @@ public class ClientHandler implements Runnable {
     }
 
     private void respond(String msg) throws IOException {
-        System.out.println("RESPONDING TO: " + player + " MSG: " + msg);
         out.write(msg); // send back response to client
         out.newLine();
         out.flush();
