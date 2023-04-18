@@ -38,6 +38,7 @@
     <packaging>jar</packaging>
 
     <build>
+        <finalName>SimonChess</finalName>
         <plugins>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -51,6 +52,7 @@
                 </configuration>
             </plugin>
 
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -58,7 +60,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>client.SimpleClient</mainClass>
+                            <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
@@ -79,6 +81,8 @@
         </plugins>
 
     </build>
+
+
 
 
 </project>

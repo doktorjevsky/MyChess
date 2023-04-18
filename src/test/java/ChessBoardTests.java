@@ -166,8 +166,8 @@ public class ChessBoardTests {
         );
         moves.forEach(m -> standardBoard = cb.makeValidMove(m, standardBoard));
         List<Move> enPassant = cb.validMovesFrom(Color.WHITE, new Position(1,4), standardBoard);
-        Assertions.assertTrue(enPassant.contains(new Move(new Position(1,4), new Position(0,3))));
-        Assertions.assertNull(standardBoard[3][0]);
+        Assertions.assertTrue(enPassant.contains(new Move(new Position(1,4), new Position(0,5))));
+        Assertions.assertNull(standardBoard[5][0]);
     }
 
     @Test
