@@ -53,11 +53,10 @@ public class Client implements MessageWriter{
                     String input = in.readLine();
                     handleInput(input);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+            } catch (IOException ignore) {
             }
         }).start();
-        //closeClient();
+
     }
 
     // TODO: implement

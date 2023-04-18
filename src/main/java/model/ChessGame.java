@@ -76,7 +76,4 @@ public class ChessGame {
             return GameState.CONTINUE;
         }
     }
-
-
-
 }

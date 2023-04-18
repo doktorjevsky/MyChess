@@ -47,7 +47,6 @@ public class ClientController implements MouseListener, Observer {
         if (inBounds(x * BOX_WIDTH, y * BOX_HEIGHT)){
             Position p = new Position(x, y);
             Move m = null;
-            System.out.println(moves);
             for (Move move : moves){
                 if (move.y().equals(p)){
                     m = move;

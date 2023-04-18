@@ -26,6 +26,7 @@ public class MainWindow extends JFrame implements Observer {
     private Button joinGame;
     private Button hostGame = new Button("Host Game");
     private ChessView view;
+    private Client c;
 
     public MainWindow(){
         this.setPreferredSize(new Dimension(BOX_SIZE * 10, BOX_SIZE * 10));
@@ -112,6 +113,7 @@ public class MainWindow extends JFrame implements Observer {
         getContentPane().setVisible(true);
         setVisible(true);
         client.startClient();
+        c = client;
     }
 
     private void removeListeners(Button b){
@@ -136,6 +138,7 @@ public class MainWindow extends JFrame implements Observer {
             getContentPane().removeAll();
             repaint();
             initButtons();
+            c.closeClient();
             //TODO: implement
         }
     }
